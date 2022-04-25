@@ -1,6 +1,8 @@
 
-$trancriptCurrent = "C:\NIMS_App\NML_CNC_File_Transfer\FileTransfer_Part1\LogTranscript_Current.txt"
-$trancriptOld = "C:\NIMS_App\NML_CNC_File_Transfer\FileTransfer_Part1\LogTranscript_Old.txt"
+#$trancriptCurrent = "C:\NIMS_App\NML_CNC_File_Transfer\FileTransfer_Part1\LogTranscript_Current.txt"
+#$trancriptOld = "C:\NIMS_App\NML_CNC_File_Transfer\FileTransfer_Part1\LogTranscript_Old.txt"
+$trancriptCurrent = "C:\Users\harguls\Desktop\CNC_File_Transfer_VSCode\CNC_File_Transfer\LogTranscript_Current.txt"
+$trancriptOld = "C:\Users\harguls\Desktop\CNC_File_Transfer_VSCode\CNC_File_Transfer\LogTranscript_Old.txt"
 $trancriptSize = 1MB
 $counter = 0
 $date = (Get-Date -Format dd-mm-yyyy).ToString()
@@ -46,11 +48,11 @@ Function MoveFiles{
         $counter++
         $fileName = $_.BaseName
         $fileNameExt = $_.Name
-        Rename-Item -Path "$srcMcaNameChg\$fileNameExt"  -NewName ($fileName+"_"+"(Time-$timeMilliSec)"+$_.Extension);
-        Write-Host "Time Stamp added to $fileName "  
+        Rename-Item -Path "$srcNameChange\$fileNameExt"  -NewName ($fileName+"_"+"(Time-$timeMilliSec)"+$_.Extension);
+        Write-Host "Time Stamp added to" $fileNameExt 
     }
     Move-Item -Path $src  -Destination $dest -Force
-    Write-Host"$counter file(s) moved to $dest"
+    Write-Host $counter "file(s) moved to $dest"
 } 
 
 MoveFiles -src $srcMt01 -dest $destMt01 -srcNameChange $srcMt01NameChg
