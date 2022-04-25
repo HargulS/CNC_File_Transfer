@@ -5,6 +5,7 @@ $counter = 0
 $mazakCounter = 0
 $date = (Get-Date -Format dd-mm-yyyy).ToString()
 $time = (Get-Date -Format hh-mm-tt).ToString()
+$timeMilliSec = (Get-Date -Format hh-mm-fff-tt).ToString()
 #If the size of LogTranscript_Current exceeds 1MB move the contents from it to "LogTranscript_Old"
 If(Test-Path -Path $trancriptCurrent -PathType Leaf){
     #check if Transcript is at its maximum size
@@ -27,8 +28,7 @@ $srcMazak= "\\MMS25163S1\Public\NcLib\FromNC\Mazak\*"
 $srcMcaNameChgMazak = "\\MMS25163S1\Public\NcLib\FromNC\Mazak"
 #Destination 
 $destMca = "\\Sidney2\MfgLib\RevisedPrograms\MC-A"
-#Time with milliseconds
-$time = (Get-Date -Format hh-mm-fff-tt).ToString()
+
 
 
 Function MoveFiles{
@@ -41,9 +41,7 @@ Function MoveFiles{
         $counter++
         $fileName = $_.BaseName
         $fileNameExt = $_.Name
-        Write-host $fileName -ForegroundColor Green
-        Rename-Item -Path "$srcMcaNameChg\$fileNameExt"  -NewName ($fileName+"_"+"(Time-$time)"+$_.Extension);
-        Add-Content -Path $logPath -Value ("Name changed: Time stamp added to $fileName ") -PassThru
+        Rename-Item -Path "$srcMcaNameChg\$fileNameExt"  -NewName ($fileName+"_"+"(Time-$timeMilliSec)"+$_.Extension);
         Write-Host "Time Stamp added to $fileName "
     }
     Move-Item -Path $src -Exclude *Mazak*  -Destination $dest -Force

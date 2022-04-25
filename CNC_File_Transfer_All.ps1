@@ -5,6 +5,7 @@ $trancriptSize = 1MB
 $counter = 0
 $date = (Get-Date -Format dd-mm-yyyy).ToString()
 $time = (Get-Date -Format hh-mm-tt).ToString()
+$timeMilliSec = (Get-Date -Format hh-mm-fff-tt).ToString()
 #If the size of LogTranscript_Current exceeds 1MB move the contents from it to "LogTranscript_Old"
 If(Test-Path -Path $trancriptCurrent -PathType Leaf){
     #check if Transcript is at its maximum size
@@ -43,15 +44,10 @@ Function MoveFiles{
     )
    Get-ChildItem -Force -Recurse $src -ErrorAction SilentlyContinue -ErrorVariable SearchError | ForEach-Object{
         $counter++
-        $fileName = $_.Name
-        # Check for duplicate files
-        $file = Test-Path -Path $dest\$fileName
-        Write-Output $file
-        if($file)
-        {
-        "$srcNameChange\$fileName" | Rename-Item -NewName ("Copy_"+$fileName);
-         Write-Host"$fileName exists in destination folder. Name change was successful"
-        }   
+        $fileName = $_.BaseName
+        $fileNameExt = $_.Name
+        Rename-Item -Path "$srcMcaNameChg\$fileNameExt"  -NewName ($fileName+"_"+"(Time-$timeMilliSec)"+$_.Extension);
+        Write-Host "Time Stamp added to $fileName "  
     }
     Move-Item -Path $src  -Destination $dest -Force
     Write-Host"$counter file(s) moved to $dest"
