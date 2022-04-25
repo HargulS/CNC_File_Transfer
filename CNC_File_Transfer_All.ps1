@@ -1,11 +1,23 @@
-$logPath = "C:\NIMS_App\NML_CNC_File_Transfer\FileTransfer_Part1\Log.txt"
-$trancriptPath = "C:\NIMS_App\NML_CNC_File_Transfer\FileTransfer_Part1\LogTranscript.txt"
-$getDate = Get-Date -Format "dddd MM/dd/yyyy HH:mm "
+
+$trancriptCurrent = "C:\NIMS_App\NML_CNC_File_Transfer\FileTransfer_Part1\LogTranscript_Current.txt"
+$trancriptOld = "C:\NIMS_App\NML_CNC_File_Transfer\FileTransfer_Part1\LogTranscript_Old.txt"
+$trancriptSize = 1MB
 $counter = 0
-Start-Transcript -Path $trancriptPath -Append
-Add-Content -Path $logPath -Value ("LOG CREATED $getDate") -PassThru
-
-
+$date = (Get-Date -Format dd-mm-yyyy).ToString()
+$time = (Get-Date -Format hh-mm-tt).ToString()
+#If the size of LogTranscript_Current exceeds 1MB move the contents from it to "LogTranscript_Old"
+If(Test-Path -Path $trancriptCurrent -PathType Leaf){
+    #check if Transcript is at its maximum size
+    if((Get-Item -Path $trancriptCurrent).Length -ge $trancriptSize){
+        # append the contents of the log file to another file 'LogTranscript_Old.Txt'
+        Add-Content -Path $trancriptOld -Value (Get-Content -Path $trancriptCurrent)
+        #clear the contents of 'LogTranscript_Current'
+        Clear-Content -Path $trancriptCurrent
+    }
+}
+Start-Transcript -Path $trancriptCurrent -Append
+Write-Host " TRANSCRIPT DATE - $date"
+Write-Host " TRANSCRIPT TIME - $time"
 #Sources 
 $srcMt01 = "\\Mt01t\programs\RECEIVE\*"
 $srcMt01NameChg ="\\Mt01t\programs\RECEIVE"
@@ -38,11 +50,11 @@ Function MoveFiles{
         if($file)
         {
         "$srcNameChange\$fileName" | Rename-Item -NewName ("Copy_"+$fileName);
-        Add-Content -Path $logPath -Value ("$fileName exists in destination folder. Name change was successful") -PassThru
+         Write-Host"$fileName exists in destination folder. Name change was successful"
         }   
     }
     Move-Item -Path $src  -Destination $dest -Force
-    Add-Content -Path $logPath -Value ("$counter file(s) moved to $dest") -PassThru
+    Write-Host"$counter file(s) moved to $dest"
 } 
 
 MoveFiles -src $srcMt01 -dest $destMt01 -srcNameChange $srcMt01NameChg

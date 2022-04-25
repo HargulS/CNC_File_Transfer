@@ -1,10 +1,24 @@
-$logPath = "R:\Public\IT\Vantage_Utilities\CNC_Scripts\File Transfer\Fastems\Log.txt"
-$trancriptPath = "R:\Public\IT\Vantage_Utilities\CNC_Scripts\File Transfer\Fastems\LogTranscript.txt"
-$getDate = Get-Date -Format "dddd MM/dd/yyyy HH:mm "
+$trancriptCurrent = "R:\Public\IT\Vantage_Utilities\CNC_Scripts\File Transfer\Fastems\LogTranscript_Current.txt"
+$trancriptOld = "R:\Public\IT\Vantage_Utilities\CNC_Scripts\File Transfer\Fastems\LogTranscript_Old.txt"
+$trancriptSize = 1MB
 $counter = 0
 $mazakCounter = 0
-Start-Transcript -Path $trancriptPath -Append
-Add-Content -Path $logPath -Value ("LOG CREATED $getDate") -PassThru
+$date = (Get-Date -Format dd-mm-yyyy).ToString()
+$time = (Get-Date -Format hh-mm-tt).ToString()
+#If the size of LogTranscript_Current exceeds 1MB move the contents from it to "LogTranscript_Old"
+If(Test-Path -Path $trancriptCurrent -PathType Leaf){
+    #check if Transcript is at its maximum size
+    if((Get-Item -Path $trancriptCurrent).Length -ge $trancriptSize){
+        # append the contents of the log file to another file 'LogTranscript_Old.Txt'
+        Add-Content -Path $trancriptOld -Value (Get-Content -Path $trancriptCurrent)
+        #clear the contents of 'LogTranscript_Current'
+        Clear-Content -Path $trancriptCurrent
+    }
+}
+Start-Transcript -Path $trancriptCurrent -Append
+Write-Host " TRANSCRIPT DATE - $date"
+Write-Host " TRANSCRIPT TIME - $time"
+
 
 #Sources 
 $srcMca = "\\MMS25163S1\Public\NcLib\FromNC\*"
@@ -30,9 +44,11 @@ Function MoveFiles{
         Write-host $fileName -ForegroundColor Green
         Rename-Item -Path "$srcMcaNameChg\$fileNameExt"  -NewName ($fileName+"_"+"(Time-$time)"+$_.Extension);
         Add-Content -Path $logPath -Value ("Name changed: Time stamp added to $fileName ") -PassThru
+        Write-Host "Time Stamp added to $fileName "
     }
     Move-Item -Path $src -Exclude *Mazak*  -Destination $dest -Force
-   Add-Content -Path $logPath -Value ("$counter file(s) moved to $dest") -PassThru
+    Write-Host "$counter file(s) moved to $dest"
+ 
 } 
 MoveFiles -src $srcMca -dest $destMca -srcNameChange $srcMcaNameChg
 
@@ -53,7 +69,7 @@ Function MoveMazakFiles{
         Rename-Item -Path "$srcMcaNameChgMazak\$fileNameExt"  -NewName ($fileName+"_"+"(Time-$time)"+$_.Extension);  
     }
     Move-Item -Path $srcMazak  -Destination $dest -Force
-    Add-Content -Path $logPath -Value ("$mazakCounter file(s) from Mazak folder moved to $dest") -PassThru
+    Write-Host ""$mazakCounter file(s) from Mazak folder moved to $dest""
 }
 MoveMazakFiles -srcMazak $srcMazak -dest $destMca -srcNameChange $srcMcaNameChg
 
