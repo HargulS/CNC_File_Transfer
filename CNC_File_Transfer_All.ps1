@@ -1,8 +1,6 @@
 
-#$trancriptCurrent = "C:\NIMS_App\NML_CNC_File_Transfer\FileTransfer_Part1\LogTranscript_Current.txt"
-#$trancriptOld = "C:\NIMS_App\NML_CNC_File_Transfer\FileTransfer_Part1\LogTranscript_Old.txt"
-$trancriptCurrent = "C:\Users\harguls\Desktop\CNC_File_Transfer_VSCode\CNC_File_Transfer\LogTranscript_Current.txt"
-$trancriptOld = "C:\Users\harguls\Desktop\CNC_File_Transfer_VSCode\CNC_File_Transfer\LogTranscript_Old.txt"
+$trancriptCurrent = "C:\NIMS_App\NML_CNC_File_Transfer\FileTransfer_Part1\LogTranscript_Current.txt"
+$trancriptOld = "C:\NIMS_App\NML_CNC_File_Transfer\FileTransfer_Part1\LogTranscript_Old.txt"
 $trancriptSize = 1MB
 $counter = 0
 $date = (Get-Date -Format dd-mm-yyyy).ToString()

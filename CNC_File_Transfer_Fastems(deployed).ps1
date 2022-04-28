@@ -1,3 +1,4 @@
+# Machine name "MMS25163S1"
 $trancriptCurrent = "R:\Public\IT\Vantage_Utilities\CNC_Scripts\File Transfer\Fastems\LogTranscript_Current.txt"
 $trancriptOld = "R:\Public\IT\Vantage_Utilities\CNC_Scripts\File Transfer\Fastems\LogTranscript_Old.txt"
 $trancriptSize = 1MB
